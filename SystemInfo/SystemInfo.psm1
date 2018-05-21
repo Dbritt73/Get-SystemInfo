@@ -3,7 +3,7 @@ function Get-NIC {
     Param(
         [String[]]$computerName
     )
-    
+
     Foreach ($Computer in $computerName){
 
         $NICs = Get-WmiObject -Class Win32_NetworkAdapter -ComputerName $Computer 
@@ -62,6 +62,7 @@ function Get-SystemInfo {
                    ValueFromPipelineByPropertyName=$True)]
         [String]$ComputerName
     )
+    
     Begin {}
 
     Process {
