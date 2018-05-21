@@ -1,7 +1,9 @@
 function Get-NIC {
     [CmdletBinding()]
     Param(
+
         [String[]]$computerName
+        
     )
 
     Foreach ($Computer in $computerName){
@@ -58,11 +60,12 @@ function Get-SystemInfo {
     Param
     (
 
-        [Parameter(Mandatory=$True,
+        [Parameter( Mandatory=$True,
                    ValueFromPipelineByPropertyName=$True)]
         [String]$ComputerName
+
     )
-    
+
     Begin {}
 
     Process {
