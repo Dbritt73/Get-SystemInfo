@@ -3,27 +3,41 @@ function Get-NIC {
     Param(
         [String[]]$computerName
     )
+    
     Foreach ($Computer in $computerName){
+
         $NICs = Get-WmiObject -Class Win32_NetworkAdapter -ComputerName $Computer 
+
         Foreach ($NIC in $NICs){
+
             $Gwmi = @{
+
                 'Class' = 'Win32_NetworkAdapterConfiguration';
                 'ComputerName' = $Computer;
                 'ErrorAction' = 'Stop'
+
             }
+
             $NetAdapt = Get-WmiObject @Gwmi | Where-Object {$_.Description -eq $Nic.Name}
+
             $Properties = @{
+
                 'Description' = $NetAdapt.Description;
                 'ConnectionName' = $NIC.NetConnectionID;
                 'DHCPEnabled' = $NetAdapt.DHCPEnabled;
                 'DHCPServer' = $NetAdapt.DHCPServer;
                 'IPAddress' = $NetAdapt.IPAddress
+
             }
+
             $Object = New-Object -TypeName PSObject -Property $Properties
             $object.PSObject.TypeNames.Insert(0,'SysInfo.NIC')
             Write-Output $object
+
         }
+
     }
+
 }
 #-----------------------------------------------------------------------------------------
 function Get-SystemInfo {
@@ -43,75 +57,107 @@ function Get-SystemInfo {
     [CmdletBinding()]
     Param
     (
-        # Param1 help description
+
         [Parameter(Mandatory=$True,
                    ValueFromPipelineByPropertyName=$True)]
         [String]$ComputerName
     )
     Begin {}
+
     Process {
+
         foreach ($Computer in $ComputerName){
+
             Try {
+
                 $gwmi = @{
+
                     'Class' = 'Win32_OperatingSystem';
                     'ComputerName' = $Computer;
                     'ErrorAction' = 'Stop'
+
                 }
+
+
                 $OS = Get-WmiObject @gwmi
 
                 $gwmi = @{
+
                     'Class' = 'Win32_ComputerSystem';
                     'ComputerName' = $Computer;
                     'ErrorAction' = 'Stop'
+
                 }
+
                 $CS = Get-WmiObject @gwmi
 
                 $Gwmi = @{
+
                     'Class' = 'Win32_Bios';
                     'ComputerName' = $Computer;
                     'ErrorAction' = 'Stop'
+
                 }
+
                 $Bios = Get-WmiObject @gwmi
 
                 $gwmi = @{
+
                     'Class' = 'Win32_QuickFixEngineering';
                     'ComputerName' = $Computer;
                     'ErrorAction' = 'Stop'
+
                 }
+
                 $Hotfix = Get-WmiObject @gwmi
 
                 $NIC = @{
+
                     'ComputerName' = $Computer;
                     'ErrorAction' = 'Stop'
+
                 }
+
                 $Network = Get-NIC @NIC | Where-Object {$_.IPAddress -ne $Null}
 
                 $gwmi = @{
+
                     'Class' = 'Win32_Processor';
                     'ComputerName' = $Computer;
                     'ErrorAction' = 'Stop'
+                    
                 }
+
                 $Processor = Get-WmiObject @gwmi
 
                 $gwmi = @{
+
                     'Class' = 'Win32_PageFileUsage';
                     'ComputerName' = $computer;
                     'ErrorAction' = 'Stop'
+
                 }
+
                 $VirtualMemory = Get-WmiObject @gwmi
 
                 $gwmi = @{
+
                     'Class' = 'Win32_PhysicalMemory';
                     'ComputerName' = $computer;
                     'ErrorAction' = 'Stop'
+
                 }
+
                 $PhysicalMemory = Get-WmiObject @gwmi
 
                 $gwmi = @{
+
                     'Class' = 'Win32_Timezone';
                     'ComputerName' = $Computer;
                     'ErrorAction' = 'Stop'
+
                 }
+
                 $TimeZone = Get-WmiObject @gwmi
 
                 $SystemLocale = Get-WinSystemLocale
@@ -119,6 +165,7 @@ function Get-SystemInfo {
                 $InputLocale = Get-WinUserLanguageList
 
                 $ObjectProperties = @{
+
                     'ComputerName' = $OS.PSComputerName;
                     'OSName' = $OS.Caption;
                     'OSManufacturer' = $OS.Manufacturer;
@@ -149,12 +196,19 @@ function Get-SystemInfo {
                     'LogonServers' = $env:LOGONSERVER;
                     'HotFixes' = $Hotfix.HotFixID;
                     'NetworkInformation' = $Network
+
                 }
+
                 $Object = New-Object -TypeName PSObject -Property $ObjectProperties
                 $Object.PSObject.TypeNames.Insert(0,'SystemInfo.object')
                 Write-Output $Object
+
             } Catch{}
+
         }
+
     }
+
     End {}
+
 }
