@@ -32,4 +32,17 @@ Class SystemInformation {
     [string]$HotFixes
     [string]$NetworkInformation
 
+
+
+    #Default Constructor
+    SystemInformation() {}
+
+    [Void] GetComputerName() {
+        
+        $CompSys = Get-CimInstance -ClassName 'Win32_ComputerSystem'
+
+        $This.$ComputerName = $CompSys.Name
+
+    }
+
 }
