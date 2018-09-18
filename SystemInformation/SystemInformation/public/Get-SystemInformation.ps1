@@ -1,47 +1,3 @@
-function Get-Get-NetworkAdapterSettings {
-    [CmdletBinding()]
-    Param(
-
-        [String[]]$computerName
-        
-    )
-
-    Foreach ($Computer in $computerName){
-
-        $NICs = Get-WmiObject -Class Win32_NetworkAdapter -ComputerName $Computer 
-
-        Foreach ($NIC in $NICs){
-
-            $Gwmi = @{
-
-                'Class' = 'Win32_NetworkAdapterConfiguration';
-                'ComputerName' = $Computer;
-                'ErrorAction' = 'Stop'
-
-            }
-
-            $NetAdapt = Get-WmiObject @Gwmi | Where-Object {$_.Description -eq $Nic.Name}
-
-            $Properties = @{
-
-                'Description' = $NetAdapt.Description;
-                'ConnectionName' = $NIC.NetConnectionID;
-                'DHCPEnabled' = $NetAdapt.DHCPEnabled;
-                'DHCPServer' = $NetAdapt.DHCPServer;
-                'IPAddress' = $NetAdapt.IPAddress
-
-            }
-
-            $Object = New-Object -TypeName PSObject -Property $Properties
-            $object.PSObject.TypeNames.Insert(0,'SysInfo.NIC')
-            Write-Output $object
-
-        }
-
-    }
-
-}
-#-----------------------------------------------------------------------------------------
 function Get-SystemInformation {
 <#
 .Synopsis
@@ -61,7 +17,8 @@ function Get-SystemInformation {
     (
 
         [Parameter( Mandatory=$True,
-                   ValueFromPipelineByPropertyName=$True)]
+                    HelpMessage='Add help message for user',
+                    ValueFromPipelineByPropertyName=$True)]
         [String]$ComputerName
 
     )
@@ -144,6 +101,7 @@ function Get-SystemInformation {
 
                 $VirtualMemory = Get-WmiObject @gwmi
 
+                <#
                 $gwmi = @{
 
                     'Class' = 'Win32_PhysicalMemory';
@@ -153,6 +111,7 @@ function Get-SystemInformation {
                 }
 
                 $PhysicalMemory = Get-WmiObject @gwmi
+                #>
 
                 $gwmi = @{
 
@@ -205,9 +164,28 @@ function Get-SystemInformation {
 
                 $Object = New-Object -TypeName PSObject -Property $ObjectProperties
                 $Object.PSObject.TypeNames.Insert(0,'SystemInfo.object')
-                Write-Output $Object
+                Write-Output -InputObject $Object
 
-            } Catch{}
+            } Catch{
+
+                # get error record
+                [Management.Automation.ErrorRecord]$e = $_
+
+                # retrieve information about runtime error
+                $info = [PSCustomObject]@{
+
+                  Exception = $e.Exception.Message
+                  Reason    = $e.CategoryInfo.Reason
+                  Target    = $e.CategoryInfo.TargetName
+                  Script    = $e.InvocationInfo.ScriptName
+                  Line      = $e.InvocationInfo.ScriptLineNumber
+                  Column    = $e.InvocationInfo.OffsetInLine
+
+                }
+                
+                # output information. Post-process collected info, and log info (optional)
+                $info
+            }
 
         }
 
