@@ -31,13 +31,14 @@ function Get-NetworkAdapterSettings {
     [CmdletBinding()]
     Param(
 
-        [Parameter(Mandatory=$true)][String[]]$computerName
+        [Parameter(Mandatory=$true)]
+        [String[]]$computerName
 
     )
 
     Foreach ($Computer in $computerName){
 
-        $NICs = Get-WmiObject -Class Win32_NetworkAdapter -ComputerName $Computer 
+        $NICs = Get-WmiObject -Class Win32_NetworkAdapter -ComputerName $Computer
 
         Foreach ($NIC in $NICs){
 
