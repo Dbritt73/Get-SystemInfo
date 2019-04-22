@@ -44,11 +44,9 @@ function Get-NetworkAdapterSettings {
 
             $Gwmi = @{
 
-                'Class' = 'Win32_NetworkAdapterConfiguration'
-
+                'Class'        = 'Win32_NetworkAdapterConfiguration'
                 'ComputerName' = $Computer
-
-                'ErrorAction' = 'Stop'
+                'ErrorAction'  = 'Stop'
 
             }
 
@@ -56,15 +54,11 @@ function Get-NetworkAdapterSettings {
 
             $Properties = @{
 
-                'Description' = $NetAdapt.Description
-
+                'Description'    = $NetAdapt.Description
                 'ConnectionName' = $NIC.NetConnectionID
-
-                'DHCPEnabled' = $NetAdapt.DHCPEnabled
-
-                'DHCPServer' = $NetAdapt.DHCPServer
-
-                'IPAddress' = $NetAdapt.IPAddress
+                'DHCPEnabled'    = $NetAdapt.DHCPEnabled
+                'DHCPServer'     = $NetAdapt.DHCPServer
+                'IPAddress'      = $NetAdapt.IPAddress
 
             }
 
@@ -118,11 +112,9 @@ function Get-SystemInformation {
 
                 $gwmi = @{
 
-                    'Class' = 'Win32_OperatingSystem'
-
+                    'Class'        = 'Win32_OperatingSystem'
                     'ComputerName' = $Computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -131,11 +123,9 @@ function Get-SystemInformation {
 
                 $gwmi = @{
 
-                    'Class' = 'Win32_ComputerSystem'
-
+                    'Class'        = 'Win32_ComputerSystem'
                     'ComputerName' = $Computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -143,11 +133,9 @@ function Get-SystemInformation {
 
                 $Gwmi = @{
 
-                    'Class' = 'Win32_Bios'
-
+                    'Class'        = 'Win32_Bios'
                     'ComputerName' = $Computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -155,11 +143,9 @@ function Get-SystemInformation {
 
                 $gwmi = @{
 
-                    'Class' = 'Win32_QuickFixEngineering'
-
+                    'Class'        = 'Win32_QuickFixEngineering'
                     'ComputerName' = $Computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -168,20 +154,17 @@ function Get-SystemInformation {
                 $NIC = @{
 
                     'ComputerName' = $Computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
-                $Network = Get-NetworkAdapterSettings @NIC | Where-Object {$_.IPAddress -ne $Null}
+                $Network = Get-NetworkAdapterSettings @NIC | Where-Object {$Null -ne $_.IPAddress}
 
                 $gwmi = @{
 
-                    'Class' = 'Win32_Processor'
-
+                    'Class'        = 'Win32_Processor'
                     'ComputerName' = $Computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -189,11 +172,9 @@ function Get-SystemInformation {
 
                 $gwmi = @{
 
-                    'Class' = 'Win32_PageFileUsage'
-
+                    'Class'        = 'Win32_PageFileUsage'
                     'ComputerName' = $computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -201,23 +182,19 @@ function Get-SystemInformation {
 
                 $gwmi = @{
 
-                    'Class' = 'Win32_PhysicalMemory'
-
+                    'Class'        = 'Win32_PhysicalMemory'
                     'ComputerName' = $computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
-                $PhysicalMemory = Get-WmiObject @gwmi
+                #$PhysicalMemory = Get-WmiObject @gwmi
 
                 $gwmi = @{
 
-                    'Class' = 'Win32_Timezone'
-
+                    'Class'        = 'Win32_Timezone'
                     'ComputerName' = $Computer
-
-                    'ErrorAction' = 'Stop'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -229,65 +206,36 @@ function Get-SystemInformation {
 
                 $ObjectProperties = @{
 
-                    'ComputerName' = $OS.PSComputerName
-
-                    'OSName' = $OS.Caption
-
-                    'OSManufacturer' = $OS.Manufacturer
-
-                    'OSBuildType' = $OS.BuildType
-
-                    'RegisteredOwner' = $OS.RegisteredUser
-
-                    'RegisteredOrganization' = $OS.Organization
-
-                    'ProductID' = $OS.SerialNumber
-
-                    'InstallDate' = $OS.ConvertToDateTime($OS.InstallDate)
-
-                    'LastBootTime' = $OS.ConvertToDateTime($OS.lastbootuptime)
-
-                    'Manufacturer' = $CS.Manufacturer
-
-                    'Model' = $CS.Model
-
-                    'SystemType' = $CS.SystemType
-
-                    'Processors' = $Processor.Name
-
-                    'BIOSVersion' = $BIOS.BIOSVersion
-
-                    'WindowsDirectory' = $OS.WindowsDirectory
-
-                    'SystemDirectory' = $OS.SystemDirectory
-
-                    'BootDevice' = $OS.BootDevice
-
-                    'SystemLocale' = $SystemLocale.Name
-
-                    'InputLocale' = $InputLocale.LanguageTag
-
-                    'TimeZone' = $TimeZone.Caption
-
-                    'TotalPhysicalMemory' = ($CS.TotalPhysicalMemory / 1MB -as [int])
-
+                    'ComputerName'            = $OS.PSComputerName
+                    'OSName'                  = $OS.Caption
+                    'OSManufacturer'          = $OS.Manufacturer
+                    'OSBuildType'             = $OS.BuildType
+                    'RegisteredOwner'         = $OS.RegisteredUser
+                    'RegisteredOrganization'  = $OS.Organization
+                    'ProductID'               = $OS.SerialNumber
+                    'InstallDate'             = $OS.ConvertToDateTime($OS.InstallDate)
+                    'LastBootTime'            = $OS.ConvertToDateTime($OS.lastbootuptime)
+                    'Manufacturer'            = $CS.Manufacturer
+                    'Model'                   = $CS.Model
+                    'SystemType'              = $CS.SystemType
+                    'Processors'              = $Processor.Name
+                    'BIOSVersion'             = $BIOS.BIOSVersion
+                    'WindowsDirectory'        = $OS.WindowsDirectory
+                    'SystemDirectory'         = $OS.SystemDirectory
+                    'BootDevice'              = $OS.BootDevice
+                    'SystemLocale'            = $SystemLocale.Name
+                    'InputLocale'             = $InputLocale.LanguageTag
+                    'TimeZone'                = $TimeZone.Caption
+                    'TotalPhysicalMemory'     = ($CS.TotalPhysicalMemory / 1MB -as [int])
                     'AvailablePhysicalMemory' = ($OS.FreePhysicalMemory / 1GB -as [int])
-
-                    'MaximumVirtualMemory' = ($OS.TotalVirtualMemorySize / 1MB -as [int])
-
-                    'AvailableVirtualMemory' = ($OS.FreeVirtualMemory / 1MB -as [int])
-
-                    'UsedVirtualMemory' = (($VirtualMemory.CurrentUsage))
-
-                    'PageFiles' = $VirtualMemory.Name
-
-                    'Domain' = $CS.Domain
-
-                    'LogonServers' = $env:LOGONSERVER
-
-                    'HotFixes' = $Hotfix.HotFixID
-
-                    'NetworkInformation' = $Network
+                    'MaximumVirtualMemory'    = ($OS.TotalVirtualMemorySize / 1MB -as [int])
+                    'AvailableVirtualMemory'  = ($OS.FreeVirtualMemory / 1MB -as [int])
+                    'UsedVirtualMemory'       = (($VirtualMemory.CurrentUsage))
+                    'PageFiles'               = $VirtualMemory.Name
+                    'Domain'                  = $CS.Domain
+                    'LogonServers'            = $env:LOGONSERVER
+                    'HotFixes'                = $Hotfix.HotFixID
+                    'NetworkInformation'      = $Network
 
                 }
 
@@ -303,17 +251,17 @@ function Get-SystemInformation {
                 # retrieve information about runtime error
                 $info = [PSCustomObject]@{
 
-                  Exception = $e.Exception.Message
-                  Reason    = $e.CategoryInfo.Reason
-                  Target    = $e.CategoryInfo.TargetName
-                  Script    = $e.InvocationInfo.ScriptName
-                  Line      = $e.InvocationInfo.ScriptLineNumber
-                  Column    = $e.InvocationInfo.OffsetInLine
+                    Exception = $e.Exception.Message
+                    Reason    = $e.CategoryInfo.Reason
+                    Target    = $e.CategoryInfo.TargetName
+                    Script    = $e.InvocationInfo.ScriptName
+                    Line      = $e.InvocationInfo.ScriptLineNumber
+                    Column    = $e.InvocationInfo.OffsetInLine
 
                 }
 
                 # output information. Post-process collected info, and log info (optional)
-                $info
+                Write-Output -InputObject $info
 
             }
 
